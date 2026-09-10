@@ -45,14 +45,10 @@ export default function LoginPage() {
       <div className="login-card">
         <div className="login-mark">Thanaweya Tracker</div>
         <h1>Sign in</h1>
-        <p className="login-sub">Pick who you are and enter your PIN.</p>
+        <p className="login-sub">Enter your PIN.</p>
         <form onSubmit={submit}>
           <div className="role-grid">
-            {ROLES.map((r) => (
-              <button type="button" key={r.id} className={"role-btn" + (role === r.id ? " active" : "")} onClick={() => setRole(r.id)}>
-                {r.label}
-              </button>
-            ))}
+          
           </div>
           <div className="field">
             <label htmlFor="pin">PIN</label>
