@@ -14,16 +14,39 @@ const NAMES = {
 
 export async function POST(req) {
   let body;
+
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Bad request" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Bad request" },
+      { status: 400 }
+    );
   }
-  const { role, pin } = body || {};
-  if (!role || !PINS[role] || String(pin) !== String(PINS[role])) {
-    return NextResponse.json({ error: "Wrong PIN. Try again." }, { status: 401 });
+
+  const { pin } = body || {};
+  const enteredPin = String(pin || "");
+
+  // Find which account matches the PIN
+  const role = Object.keys(PINS).find(
+    (key) => enteredPin === String(PINS[key])
+  );
+
+  // No matching PIN
+  if (!role) {
+    return NextResponse.json(
+      { error: "Wrong PIN. Try again." },
+      { status: 401 }
+    );
   }
-  const res = NextResponse.json({ ok: true, role, name: NAMES[role] });
+
+  const res = NextResponse.json({
+    ok: true,
+    role,
+    name: NAMES[role],
+  });
+
+  // Store the detected role in the login cookie
   res.cookies.set("thanaweya_role", role, {
     httpOnly: true,
     sameSite: "lax",
@@ -31,5 +54,6 @@ export async function POST(req) {
     path: "/",
     maxAge: 60 * 60 * 24 * 60,
   });
+
   return res;
 }
